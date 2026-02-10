@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Game</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0f0f0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .quiz-box {
+            background: #1a1a1a;
+            padding: 30px;
+            width: 420px;
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* BIG WELCOME TEXT */
+        #welcome {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .option {
+            background: #111;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: #222;
+            transform: translateX(3px);
+        }
+
+        .option.selected {
+            background: #ffffff;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #ffffff;
+            border: none;
+            color: #000000;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #e6e6e6;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-box">
+    <!-- Welcome Screen -->
+    <h2 id="welcome">Welcome To The Quiz Game 👋</h2>
+
+    <!-- Quiz Content -->
+    <h2 id="question" class="hidden"></h2>
+    <div id="options" class="hidden"></div>
+    <button id="nextBtn" class="hidden" onclick="nextQuestion()">Next</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    const quiz = [
+        {
+            question: "The ability of one class to acquire methods and attributes from another class is called.",
+            options: ["Inheritance", "Abstraction", "Polymorphism", "Objects"],
+            answer: 0
+        },
+        {
+            question: "Which of the following is a type of inheritance?",
+            options: ["Single", "Double", "Multiple", "Both A and C"],
+            answer: 3
+        },
+        {
+            question: "What type of inheritance has multiple subclasses to a single superclass?",
+            options: ["Multiple inheritance", "Multilevel inheritance", "Hierarchical inheritance", "None"],
+            answer: 2
+        },
+        {
+            question: "What is the depth of multilevel inheritance in Python?",
+            options: ["Two level", "Three level", "Any level", "None"],
+            answer: 2
+        },
+        {
+            question: "What does MRO stand for?",
+            options: ["Method Recursive Object", "Method Resolution Order", "Main Resolution Order", "None"],
+            answer: 1
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+
+    /* SHOW QUIZ AFTER 2 SECONDS */
+    setTimeout(() => {
+        document.getElementById("welcome").classList.add("hidden");
+        document.getElementById("question").classList.remove("hidden");
+        document.getElementById("options").classList.remove("hidden");
+        document.getElementById("nextBtn").classList.remove("hidden");
+        loadQuestion();
+    }, 2000);
+
+    function loadQuestion() {
+        document.getElementById("result").innerText = "";
+        selectedOption = null;
+
+        const q = quiz[currentQuestion];
+        document.getElementById("question").innerText = q.question;
+
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        q.options.forEach((option, index) => {
+            const div = document.createElement("div");
+            div.classList.add("option");
+            div.innerText = option;
+            div.onclick = () => selectOption(index);
+            optionsDiv.appendChild(div);
+        });
+    }
+
+    function selectOption(index) {
+        selectedOption = index;
+        document.querySelectorAll(".option").forEach((opt, i) => {
+            opt.classList.toggle("selected", i === index);
+        });
+    }
+
+    function nextQuestion() {
+        if (selectedOption === null) {
+            alert("Please select an option!");
+            return;
+        }
+
+        if (selectedOption === quiz[currentQuestion].answer) {
+            score++;
+        }
+
+        currentQuestion++;
+
+        if (currentQuestion < quiz.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("question").innerText = "Quiz Completed 🎉";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("nextBtn").style.display = "none";
+
+        document.getElementById("result").innerHTML =
+            `You scored <b>${score}</b> out of <b>${quiz.length}</b><br>
+             Percentage: <b>${(score / quiz.length) * 100}%</b>`;
+    }
+</script>
+
+</body>
+</html>
